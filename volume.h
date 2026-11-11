@@ -8,18 +8,20 @@ struct Volume {
     int *items;
 };
 
-//
-
+// start
 struct Volume *volume_init(size_t capacity);
 void volume_free(struct Volume *v);
-void volume_show(const struct Volume *v);
-int volume_clear(struct Volume *v);
-bool volume_is_empty(const struct Volume *v);
 
+// core operations
 int volume_push(struct Volume *v, int value);
 int volume_pop(struct Volume *v, int *out);
 int volume_peek(const struct Volume *v, int *out);
+int volume_insert(struct Volume *v, size_t index, int value);
 
+// state and utilities
+bool volume_is_empty(const struct Volume *v);
+int volume_clear(struct Volume *v);
+void volume_show(const struct Volume *v);
 
 // Medium (memory)
 //
