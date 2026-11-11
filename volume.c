@@ -19,9 +19,14 @@ int main(void) {
     printf("pop: %d\n", out);
     volume_show(v);
 
-    volume_insert(v, 0, 9); // start
+    volume_insert(v, 0, 9);
     volume_show(v);
-    volume_insert(v, 2, 8); // middle
+    volume_insert(v, 2, 8);
+    volume_show(v);
+    volume_insert(v, v->length, 99);
+    volume_insert(v, v->length, 100);
+    volume_show(v);
+    volume_insert(v, v->length, 101);
     volume_show(v);
 
     volume_clear(v);
@@ -72,23 +77,7 @@ int volume_push(struct Volume *v, const int value) {
         return EXIT_FAILURE;
     }
 
-    if (v->length == v->capacity) {
-        const size_t new_cap = v->capacity > SIZE_MAX / 2 / sizeof *v->items
-            ? 0
-            : v->capacity * 2;
-
-        if (new_cap == 0) {
-            printf("memory overflow during new_cap assignation\n");
-            return EXIT_FAILURE;
-        }
-
-        int *tmp = realloc(v->items, new_cap * sizeof *v->items);
-        if (tmp == NULL) {
-            return EXIT_FAILURE;
-        }
-        v->items = tmp;
-        v->capacity = new_cap;
-    }
+    if (v->length == v->capacity) volume_expand(v);
 
     v->items[v->length] = value;
     v->length++;
@@ -123,7 +112,7 @@ int volume_peek(const struct Volume *v, int *out) {
         return EXIT_FAILURE;
     }
 
-    *out = v->items[v->length-1];
+    *out = v->items[v->length - 1];
 
     return EXIT_SUCCESS;
 }
@@ -136,16 +125,13 @@ int volume_insert(struct Volume *v, const size_t index, const int value) {
         return EXIT_FAILURE;
     };
 
-    if (index > v->length || (int)index < 0) {
+    if (index > v->length || (int) index < 0) {
         printf("index out of bounds\n");
         return EXIT_FAILURE;
     }
 
     // todo: here we shrink
-    if (v->capacity == v->length) {
-        printf("capacity overflow\n");
-        return EXIT_FAILURE;
-    }
+    if (v->length == v->capacity) volume_expand(v);
 
     for (size_t i = v->length; i > index; i--) {
         v->items[i] = v->items[i - 1];
@@ -187,4 +173,23 @@ void volume_show(const struct Volume *v) {
             printf("| _ ");
     }
     printf("|  %zu/%zu\n", v->length, v->capacity);
+}
+
+int volume_expand(struct Volume *v) {
+    const size_t new_cap = v->capacity > SIZE_MAX / 2 / sizeof *v->items
+                               ? 0
+                               : v->capacity * 2;
+
+    if (new_cap == 0) {
+        printf("memory overflow during new_cap assignation\n");
+        return EXIT_FAILURE;
+    }
+
+    int *tmp = realloc(v->items, new_cap * sizeof *v->items);
+    if (tmp == NULL) {
+        return EXIT_FAILURE;
+    }
+    v->items = tmp;
+    v->capacity = new_cap;
+    return EXIT_SUCCESS;
 }
