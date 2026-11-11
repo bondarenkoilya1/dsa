@@ -21,7 +21,7 @@ int volume_insert(struct Volume *v, size_t index, int value);
 // state and utilities
 bool volume_is_empty(const struct Volume *v);
 int volume_clear(struct Volume *v);
-void volume_show(const struct Volume *v);
+void volume_show(const struct Volume *v, bool show_empty);
 int volume_expand(struct Volume *v);
 
 // Medium (memory)

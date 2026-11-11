@@ -10,27 +10,27 @@ int main(void) {
     printf("empty: %d\n", volume_is_empty(v));
 
     for (int i = 1; i <= 5; i++) volume_push(v, i);
-    volume_show(v);
+    volume_show(v, 1);
 
     int out = 0;
     volume_peek(v, &out);
     printf("peek: %d\n", out);
     volume_pop(v, &out);
     printf("pop: %d\n", out);
-    volume_show(v);
+    volume_show(v, 1);
 
     volume_insert(v, 0, 9);
-    volume_show(v);
+    volume_show(v,0);
     volume_insert(v, 2, 8);
-    volume_show(v);
+    volume_show(v,0);
     volume_insert(v, v->length, 99);
     volume_insert(v, v->length, 100);
-    volume_show(v);
+    volume_show(v,0);
     volume_insert(v, v->length, 101);
-    volume_show(v);
+    volume_show(v,1);
 
     volume_clear(v);
-    volume_show(v);
+    volume_show(v,1);
     printf("empty: %d\n", volume_is_empty(v));
 
     volume_free(v);
@@ -130,7 +130,6 @@ int volume_insert(struct Volume *v, const size_t index, const int value) {
         return EXIT_FAILURE;
     }
 
-    // todo: here we shrink
     if (v->length == v->capacity) volume_expand(v);
 
     for (size_t i = v->length; i > index; i--) {
@@ -160,13 +159,15 @@ int volume_clear(struct Volume *v) {
     return EXIT_SUCCESS;
 }
 
-void volume_show(const struct Volume *v) {
+void volume_show(const struct Volume *v, const bool show_empty) {
     if (v == NULL) {
         printf("v == NULL\n");
         return;
     }
 
-    for (size_t i = 0; i < v->capacity; i++) {
+    const size_t limit = show_empty ? v->capacity : v->length;
+
+    for (size_t i = 0; i < limit; i++) {
         if (i < v->length)
             printf("| %d ", v->items[i]);
         else
