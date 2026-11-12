@@ -41,7 +41,7 @@ int main(void) {
 
 struct Vector *vector_init(const size_t capacity) {
     if (capacity == 0) {
-        printf("capacity == 0\n");
+        fprintf(stderr, "vector_init: capacity == 0\n");
         return NULL;
     }
 
@@ -73,7 +73,7 @@ void vector_free(struct Vector *v) {
 
 int vector_push(struct Vector *v, const int value) {
     if (v == NULL) {
-        printf("v == NULL\n");
+        fprintf(stderr, "vector_push: v == NULL\n");
         return EXIT_FAILURE;
     }
 
@@ -89,7 +89,7 @@ int vector_push(struct Vector *v, const int value) {
 // warn: unsafe. leave removed elements as it is
 int vector_pop(struct Vector *v, int *out) {
     if (v == NULL || v->length < 1) {
-        printf("v == NULL or v.length < 1\n");
+        fprintf(stderr, "vector_pop: v == NULL or vector is empty\n");
         return EXIT_FAILURE;
     }
 
@@ -103,12 +103,12 @@ int vector_pop(struct Vector *v, int *out) {
 // vector_peek reads last element without removing it
 int vector_peek(const struct Vector *v, int *out) {
     if (v == NULL || v->length < 1) {
-        printf("v == NULL or v.length < 1\n");
+        fprintf(stderr, "vector_peek: v == NULL or vector is empty\n");
         return EXIT_FAILURE;
     }
 
     if (out == NULL) {
-        printf("out == NULL\n");
+        fprintf(stderr, "vector_peek: out == NULL\n");
         return EXIT_FAILURE;
     }
 
@@ -121,12 +121,12 @@ int vector_peek(const struct Vector *v, int *out) {
 // v[index] onward one position to the right, and increases the length by 1.
 int vector_insert(struct Vector *v, const size_t index, const int value) {
     if (v == NULL) {
-        printf("v == NULL\n");
+        fprintf(stderr, "vector_insert: v == NULL\n");
         return EXIT_FAILURE;
     };
 
     if (index > v->length) {
-        printf("index out of bounds\n");
+        fprintf(stderr, "vector_insert: index out of bounds\n");
         return EXIT_FAILURE;
     }
 
@@ -145,12 +145,12 @@ int vector_insert(struct Vector *v, const size_t index, const int value) {
 // after it one position to the left, then decreases the length by 1
 int vector_remove(struct Vector *v, const size_t index) {
     if (v == NULL) {
-        printf("v == NULL\n");
+        fprintf(stderr, "vector_remove: v == NULL\n");
         return EXIT_FAILURE;
     }
 
     if (index >= v->length) {
-        printf("index out of bounds\n");
+        fprintf(stderr, "vector_remove: index out of bounds\n");
         return EXIT_FAILURE;
     }
 
@@ -174,7 +174,7 @@ int vector_shrink(struct Vector *v, const size_t spare) {
     size_t new_cap = v->length + spare;
     if (new_cap == 0) new_cap = 1;
     if (new_cap > v->capacity) {
-        printf("new_cap out of bounds\n");
+        fprintf(stderr, "vector_shrink: new_cap out of bounds\n");
         return EXIT_FAILURE;
     }
 
@@ -198,7 +198,7 @@ bool vector_is_empty(const struct Vector *v) {
 
 int vector_clear(struct Vector *v) {
     if (v == NULL) {
-        printf("v == NULL\n");
+        fprintf(stderr, "vector_clear: v == NULL\n");
         return EXIT_FAILURE;
     };
 
@@ -209,7 +209,7 @@ int vector_clear(struct Vector *v) {
 
 void vector_show(const struct Vector *v, const bool show_empty) {
     if (v == NULL) {
-        printf("v == NULL\n");
+        fprintf(stderr, "vector_show: v == NULL\n");
         return;
     }
 
@@ -230,7 +230,7 @@ int vector_expand(struct Vector *v) {
                                : v->capacity * 2;
 
     if (new_cap == 0) {
-        printf("memory overflow during new_cap assignation\n");
+        fprintf(stderr, "vector_expand: capacity overflow\n");
         return EXIT_FAILURE;
     }
 
