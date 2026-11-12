@@ -1,51 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "volume.h"
+#include "vector.h"
 
 #include <assert.h>
 #include <stdbool.h>
 
 int main(void) {
-    struct Volume *v = volume_init(4);
-    printf("empty: %d\n", volume_is_empty(v));
+    struct Vector *v = vector_init(4);
+    printf("empty: %d\n", vector_is_empty(v));
 
-    for (int i = 1; i <= 5; i++) volume_push(v, i);
-    volume_show(v, 1);
+    for (int i = 1; i <= 5; i++) vector_push(v, i);
+    vector_show(v, 1);
 
     int out = 0;
-    volume_peek(v, &out);
+    vector_peek(v, &out);
     printf("peek: %d\n", out);
-    volume_pop(v, &out);
+    vector_pop(v, &out);
     printf("pop: %d\n", out);
-    volume_show(v, 1);
+    vector_show(v, 1);
 
-    volume_insert(v, 0, 9);
-    volume_show(v,0);
-    volume_insert(v, 2, 8);
-    volume_show(v,0);
-    volume_insert(v, v->length, 99);
-    volume_insert(v, v->length, 100);
-    volume_show(v,0);
-    volume_insert(v, v->length, 101);
-    volume_show(v,1);
+    vector_insert(v, 0, 9);
+    vector_show(v,0);
+    vector_insert(v, 2, 8);
+    vector_show(v,0);
+    vector_insert(v, v->length, 99);
+    vector_insert(v, v->length, 100);
+    vector_show(v,0);
+    vector_insert(v, v->length, 101);
+    vector_show(v,1);
 
-    volume_clear(v);
-    volume_show(v,1);
-    printf("empty: %d\n", volume_is_empty(v));
+    vector_clear(v);
+    vector_show(v,1);
+    printf("empty: %d\n", vector_is_empty(v));
 
-    volume_free(v);
+    vector_free(v);
     return EXIT_SUCCESS;
 }
 
 /* ---------- start: lifecycle ---------- */
 
-struct Volume *volume_init(const size_t capacity) {
+struct Vector *vector_init(const size_t capacity) {
     if (capacity == 0) {
         printf("capacity == 0\n");
         return NULL;
     }
 
-    struct Volume *v = malloc(sizeof *v);
+    struct Vector *v = malloc(sizeof *v);
     if (v == NULL) {
         return NULL;
     }
@@ -63,7 +63,7 @@ struct Volume *volume_init(const size_t capacity) {
     return v;
 }
 
-void volume_free(struct Volume *v) {
+void vector_free(struct Vector *v) {
     if (v == NULL) return;
     free(v->items);
     free(v);
@@ -71,23 +71,23 @@ void volume_free(struct Volume *v) {
 
 /* ---------- middle: core operations ---------- */
 
-int volume_push(struct Volume *v, const int value) {
+int vector_push(struct Vector *v, const int value) {
     if (v == NULL) {
         printf("v == NULL\n");
         return EXIT_FAILURE;
     }
 
-    if (v->length == v->capacity) volume_expand(v);
+    if (v->length == v->capacity) vector_expand(v);
 
     v->items[v->length] = value;
     v->length++;
     return EXIT_SUCCESS;
 }
 
-// volume_pop removes last element and returns it to the incoming pV.
-// it accepts volume and pointer to the variable to save removed item
+// vector_pop removes last element and returns it to the incoming pV.
+// it accepts vector and pointer to the variable to save removed item
 // warn: unsafe. leave removed elements as it is
-int volume_pop(struct Volume *v, int *out) {
+int vector_pop(struct Vector *v, int *out) {
     if (v == NULL || v->length < 1) {
         printf("v == NULL or v.length < 1\n");
         return EXIT_FAILURE;
@@ -100,8 +100,8 @@ int volume_pop(struct Volume *v, int *out) {
     return EXIT_SUCCESS;
 }
 
-// volume_peek reads last element without removing it
-int volume_peek(const struct Volume *v, int *out) {
+// vector_peek reads last element without removing it
+int vector_peek(const struct Vector *v, int *out) {
     if (v == NULL || v->length < 1) {
         printf("v == NULL or v.length < 1\n");
         return EXIT_FAILURE;
@@ -117,9 +117,9 @@ int volume_peek(const struct Volume *v, int *out) {
     return EXIT_SUCCESS;
 }
 
-// volume_insert places a new value at v[index] and shifts all elements
+// vector_insert places a new value at v[index] and shifts all elements
 // from v[index] onward one position to the right
-int volume_insert(struct Volume *v, const size_t index, const int value) {
+int vector_insert(struct Vector *v, const size_t index, const int value) {
     if (v == NULL) {
         printf("v == NULL\n");
         return EXIT_FAILURE;
@@ -130,7 +130,7 @@ int volume_insert(struct Volume *v, const size_t index, const int value) {
         return EXIT_FAILURE;
     }
 
-    if (v->length == v->capacity) volume_expand(v);
+    if (v->length == v->capacity) vector_expand(v);
 
     for (size_t i = v->length; i > index; i--) {
         v->items[i] = v->items[i - 1];
@@ -143,12 +143,12 @@ int volume_insert(struct Volume *v, const size_t index, const int value) {
 
 /* ---------- end: state and utilities ---------- */
 
-bool volume_is_empty(const struct Volume *v) {
+bool vector_is_empty(const struct Vector *v) {
     assert(v != NULL);
     return v->length == 0;
 }
 
-int volume_clear(struct Volume *v) {
+int vector_clear(struct Vector *v) {
     if (v == NULL) {
         printf("v == NULL\n");
         return EXIT_FAILURE;
@@ -159,7 +159,7 @@ int volume_clear(struct Volume *v) {
     return EXIT_SUCCESS;
 }
 
-void volume_show(const struct Volume *v, const bool show_empty) {
+void vector_show(const struct Vector *v, const bool show_empty) {
     if (v == NULL) {
         printf("v == NULL\n");
         return;
@@ -176,7 +176,7 @@ void volume_show(const struct Volume *v, const bool show_empty) {
     printf("|  %zu/%zu\n", v->length, v->capacity);
 }
 
-int volume_expand(struct Volume *v) {
+int vector_expand(struct Vector *v) {
     const size_t new_cap = v->capacity > SIZE_MAX / 2 / sizeof *v->items
                                ? 0
                                : v->capacity * 2;
