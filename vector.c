@@ -6,34 +6,48 @@
 #include <stdbool.h>
 
 int main(void) {
-    struct Vector *v = vector_init(4);
-    printf("empty: %d\n", vector_is_empty(v));
+    struct Vector *v = vector_init(3);
 
-    for (int i = 1; i <= 5; i++) vector_push(v, i);
+    if (v == NULL) return EXIT_FAILURE;
+    printf("Initial: ");
     vector_show(v, 1);
 
-    int out = 0;
-    vector_peek(v, &out);
-    printf("peek: %d\n", out);
-    vector_pop(v, &out);
-    printf("pop: %d\n", out);
+    // Add elements (automatic capacity expansion)
+    for (int i = 1; i <= 5; i++)
+        vector_push(v, i * 10);
+    printf("After push: ");
     vector_show(v, 1);
 
-    vector_insert(v, 0, 9);
-    vector_show(v,0);
-    vector_insert(v, 2, 8);
-    vector_show(v,0);
-    vector_insert(v, v->length, 99);
-    vector_insert(v, v->length, 100);
-    vector_show(v,0);
-    vector_insert(v, v->length, 101);
-    vector_show(v,1);
+    // Read the last element
+    int value;
+    vector_peek(v, &value);
+    printf("Peek: %d\n", value);
 
+    // Remove the last element
+    vector_pop(v, &value);
+    printf("Pop: %d\n", value);
+
+    // Insert and remove elements
+    vector_insert(v, 1, 99);
+    vector_remove(v, 2);
+    printf("After insert/remove: ");
+    vector_show(v, 1);
+
+    // Change capacity
+    vector_reserve(v, 10);
+    printf("After reserve: ");
+    vector_show(v, 1);
+    vector_shrink(v, 0);
+    printf("After shrink: ");
+    vector_show(v, 1);
+
+    // Clear all elements
     vector_clear(v);
-    vector_show(v,1);
-    printf("empty: %d\n", vector_is_empty(v));
-
+    printf("After clear: ");
+    vector_show(v, 1);
+    printf("Empty: %s\n", vector_is_empty(v) ? "yes" : "no");
     vector_free(v);
+
     return EXIT_SUCCESS;
 }
 
@@ -41,7 +55,7 @@ int main(void) {
 
 struct Vector *vector_init(const size_t capacity) {
     if (capacity == 0) {
-        fprintf(stderr, "vector_init: capacity == 0\n");
+        fprintf(stderr, "vector_init: capacity cannot be equal to 0\n");
         return NULL;
     }
 
@@ -173,21 +187,24 @@ int vector_shrink(struct Vector *v, const size_t spare) {
 
     size_t new_cap = v->length + spare;
     if (new_cap == 0) new_cap = 1;
-    if (new_cap > v->capacity) {
-        fprintf(stderr, "vector_shrink: new_cap out of bounds\n");
-        return EXIT_FAILURE;
-    }
+    if (new_cap == v->capacity) return EXIT_SUCCESS;
 
-    int *tmp = realloc(v->items, new_cap * sizeof *v->items);
-    if (tmp == NULL) {
-        fprintf(stderr, "vector_shrink: realloc failed\n");
-        return EXIT_FAILURE;
-    }
-
-    v->items = tmp;
-    v->capacity = new_cap;
-    return EXIT_SUCCESS;
+    return vector_realloc(v, new_cap);
 }
+
+// vector_reserve grows capacity to at least new_cap.
+// It never shrinks: if new_cap <= v->capacity, nothing happens.
+int vector_reserve(struct Vector *v, const size_t new_cap) {
+    if (v == NULL) {
+        fprintf(stderr, "vector_reserve: v == NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (new_cap <= v->capacity) return EXIT_SUCCESS;
+
+    return vector_realloc(v, new_cap);
+}
+
 
 /* ---------- end: state and utilities ---------- */
 
@@ -225,20 +242,51 @@ void vector_show(const struct Vector *v, const bool show_empty) {
 }
 
 int vector_expand(struct Vector *v) {
-    const size_t new_cap = v->capacity > SIZE_MAX / 2 / sizeof *v->items
-                               ? 0
-                               : v->capacity * 2;
-
-    if (new_cap == 0) {
-        fprintf(stderr, "vector_expand: capacity overflow\n");
+    if (v == NULL) {
+        fprintf(stderr, "vector_expand: v == NULL\n");
         return EXIT_FAILURE;
     }
 
+    if (v->capacity > SIZE_MAX / 2 / sizeof *v->items) {
+        fprintf(stderr, "vector_expand: capacity too large\n");
+        return EXIT_FAILURE;
+    }
+
+    const size_t new_cap = v->capacity * 2;
+
+    return vector_realloc(v, new_cap);
+}
+
+// vector_realloc reallocates memory to specified capacity for the vector
+int vector_realloc(struct Vector *v, const size_t new_cap) {
+    if (v == NULL) {
+        fprintf(stderr, "vector_realloc: v == NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (new_cap == 0) {
+        fprintf(stderr, "vector_realloc: capacity cannot be equal to 0\n");
+        return EXIT_FAILURE;
+    }
+
+    if (new_cap > SIZE_MAX / sizeof *v->items) {
+        fprintf(stderr, "vector_realloc: capacity too large\n");
+        return EXIT_FAILURE;
+    }
+
+    if (new_cap < v->length) {
+        fprintf(stderr, "vector_realloc: new capacity cannot be smaller than v->length\n");
+        return EXIT_FAILURE;
+    }
+
+
     int *tmp = realloc(v->items, new_cap * sizeof *v->items);
     if (tmp == NULL) {
+        fprintf(stderr, "vector_realloc: realloc failed\n");
         return EXIT_FAILURE;
     }
     v->items = tmp;
     v->capacity = new_cap;
+
     return EXIT_SUCCESS;
 }
