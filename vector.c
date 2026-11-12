@@ -117,15 +117,15 @@ int vector_peek(const struct Vector *v, int *out) {
     return EXIT_SUCCESS;
 }
 
-// vector_insert places a new value at v[index] and shifts all elements
-// from v[index] onward one position to the right
+// vector_insert places value at v[index], shifting every element from
+// v[index] onward one position to the right, and increases the length by 1.
 int vector_insert(struct Vector *v, const size_t index, const int value) {
     if (v == NULL) {
         printf("v == NULL\n");
         return EXIT_FAILURE;
     };
 
-    if (index > v->length || (int) index < 0) {
+    if (index > v->length) {
         printf("index out of bounds\n");
         return EXIT_FAILURE;
     }
@@ -138,6 +138,26 @@ int vector_insert(struct Vector *v, const size_t index, const int value) {
     v->items[index] = value;
     v->length++;
 
+    return EXIT_SUCCESS;
+}
+
+// vector_remove deletes the element at v[index] by shifting every element
+// after it one position to the left, then decreases the length by 1
+int vector_remove(struct Vector *v, const size_t index) {
+    if (v == NULL) {
+        printf("v == NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (index >= v->length) {
+        printf("index out of bounds\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = index; i + 1 < v->length; i++) {
+        v->items[i] = v->items[i + 1];
+    }
+    v->length--;
     return EXIT_SUCCESS;
 }
 
