@@ -161,6 +161,34 @@ int vector_remove(struct Vector *v, const size_t index) {
     return EXIT_SUCCESS;
 }
 
+// vector_shrink releases the unused slots (indices length..capacity-1)
+// by reducing capacity to max(length+spare, 1)
+int vector_shrink(struct Vector *v, const size_t spare) {
+    if (v == NULL) {
+        fprintf(stderr, "vector_shrink: v == NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (spare >= v->capacity - v->length) return EXIT_SUCCESS;
+
+    size_t new_cap = v->length + spare;
+    if (new_cap == 0) new_cap = 1;
+    if (new_cap > v->capacity) {
+        printf("new_cap out of bounds\n");
+        return EXIT_FAILURE;
+    }
+
+    int *tmp = realloc(v->items, new_cap * sizeof *v->items);
+    if (tmp == NULL) {
+        fprintf(stderr, "vector_shrink: realloc failed\n");
+        return EXIT_FAILURE;
+    }
+
+    v->items = tmp;
+    v->capacity = new_cap;
+    return EXIT_SUCCESS;
+}
+
 /* ---------- end: state and utilities ---------- */
 
 bool vector_is_empty(const struct Vector *v) {

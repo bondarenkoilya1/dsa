@@ -18,6 +18,7 @@ int vector_pop(struct Vector *v, int *out);
 int vector_peek(const struct Vector *v, int *out);
 int vector_insert(struct Vector *v, size_t index, int value);
 int vector_remove(struct Vector *v, size_t index);
+int vector_shrink(struct Vector *v, size_t spare);
 
 // state and utilities
 bool vector_is_empty(const struct Vector *v);
@@ -27,7 +28,6 @@ int vector_expand(struct Vector *v);
 
 // Medium (memory)
 //
-//  vector_remove(v, index)
 //  vector_shrink(v)
 //  vector_reserve(v, new_cap)
 //
