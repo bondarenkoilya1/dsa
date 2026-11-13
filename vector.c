@@ -1,58 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "vector.h"
-
 #include <assert.h>
 #include <stdbool.h>
+#include "vector.h"
+#include "search.h"
+
+#include <assert.h>
 
 int main(void) {
     struct Vector *v = vector_init(3);
-
     if (v == NULL) return EXIT_FAILURE;
-    printf("Initial: ");
-    vector_show(v, 1);
 
-    // Add elements (automatic capacity expansion)
-    for (int i = 1; i <= 5; i++)
-        vector_push(v, i * 10);
+    for (int i = 1; i <= 16; i++) vector_push(v, i);
     printf("After push: ");
     vector_show(v, 1);
 
-    // Read the last element
+    // Search: every value from 0 to 17, so we hit "less than all" and "greater than all"
+    for (int x = 0; x <= 17; x++) {
+        size_t idx;
+        enum result r = vector_find(v, x, &idx, true);
+        if (x >= 1 && x <= 16) assert(r == FOUND && v->items[idx] == x);
+        else assert(r == NOT_FOUND);
+    }
+
+    // The rest: one call per function
     int value;
     vector_peek(v, &value);
-    printf("Peek: %d\n", value);
-
-    // Remove the last element
     vector_pop(v, &value);
-    printf("Pop: %d\n", value);
-
-    // Insert and remove elements
     vector_insert(v, 1, 99);
     vector_remove(v, 2);
-    printf("After insert/remove: ");
-    vector_show(v, 1);
-
-    // Change capacity
     vector_reserve(v, 10);
-    printf("After reserve: ");
-    vector_show(v, 1);
     vector_shrink(v, 0);
-    printf("After shrink: ");
+    printf("After insert/remove/reserve/shrink: ");
     vector_show(v, 1);
 
-    // Clear all elements
+    // Search on an empty vector
     vector_clear(v);
-    printf("After clear: ");
-    vector_show(v, 1);
+    size_t idx;
+    assert(vector_find(v, 5, &idx, true) == NOT_FOUND);
     printf("Empty: %s\n", vector_is_empty(v) ? "yes" : "no");
-    vector_free(v);
 
+    vector_free(v);
     return EXIT_SUCCESS;
 }
 
 /* ---------- start: lifecycle ---------- */
 
+// vector_init creates an empty vector with the specified initial capacity.
 struct Vector *vector_init(const size_t capacity) {
     if (capacity == 0) {
         fprintf(stderr, "vector_init: capacity cannot be equal to 0\n");
@@ -77,6 +71,7 @@ struct Vector *vector_init(const size_t capacity) {
     return v;
 }
 
+// vector_free frees the memory taken by vector items and the vector itself
 void vector_free(struct Vector *v) {
     if (v == NULL) return;
     free(v->items);
@@ -203,6 +198,32 @@ int vector_reserve(struct Vector *v, const size_t new_cap) {
     if (new_cap <= v->capacity) return EXIT_SUCCESS;
 
     return vector_realloc(v, new_cap);
+}
+
+// vector_find searches for value and writes its index to *out (only when FOUND).
+// is_sorted == true:  binary search, v must be sorted ascending, returns ANY matching index.
+// is_sorted == false: linear search, returns the FIRST matching index.
+enum result vector_find(struct Vector *v, const int value, size_t *out, const bool is_sorted) {
+    if (v == NULL) {
+        fprintf(stderr, "vector_find: v == NULL\n");
+        return ERROR;
+    }
+
+    if (out == NULL) {
+        fprintf(stderr, "vector_find: out == NULL\n");
+        return ERROR;
+    }
+
+    if (is_sorted) return bs(v, value, out);
+
+    for (size_t i = 0; i < v->length; i++) {
+        if (v->items[i] == value) {
+            *out = i;
+            return FOUND;
+        }
+    }
+
+    return NOT_FOUND;
 }
 
 
