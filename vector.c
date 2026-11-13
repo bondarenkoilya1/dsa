@@ -18,7 +18,7 @@ int main(void) {
     // Search: every value from 0 to 17, so we hit "less than all" and "greater than all"
     for (int x = 0; x <= 17; x++) {
         size_t idx;
-        enum result r = vector_find(v, x, &idx, true);
+        const enum binary_search_result r = vector_find(v, x, &idx, true);
         if (x >= 1 && x <= 16) assert(r == FOUND && v->items[idx] == x);
         else assert(r == NOT_FOUND);
     }
@@ -32,6 +32,9 @@ int main(void) {
     vector_reserve(v, 10);
     vector_shrink(v, 0);
     printf("After insert/remove/reserve/shrink: ");
+    vector_show(v, 1);
+
+    vector_reverse(v);
     vector_show(v, 1);
 
     // Search on an empty vector
@@ -203,7 +206,7 @@ int vector_reserve(struct Vector *v, const size_t new_cap) {
 // vector_find searches for value and writes its index to *out (only when FOUND).
 // is_sorted == true:  binary search, v must be sorted ascending, returns ANY matching index.
 // is_sorted == false: linear search, returns the FIRST matching index.
-enum result vector_find(struct Vector *v, const int value, size_t *out, const bool is_sorted) {
+enum binary_search_result vector_find(struct Vector *v, const int value, size_t *out, const bool is_sorted) {
     if (v == NULL) {
         fprintf(stderr, "vector_find: v == NULL\n");
         return ERROR;
@@ -226,6 +229,20 @@ enum result vector_find(struct Vector *v, const int value, size_t *out, const bo
     return NOT_FOUND;
 }
 
+int vector_reverse(struct Vector *v) {
+    if (v == NULL) {
+        fprintf(stderr, "vector_reverse: v == NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < v->length / 2; i++) {
+        const int tmp = v->items[i];
+        v->items[i] = v->items[v->length - 1 - i];
+        v->items[v->length - 1 - i] = tmp;
+    }
+
+    return EXIT_SUCCESS;
+}
 
 /* ---------- end: state and utilities ---------- */
 

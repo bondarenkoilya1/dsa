@@ -4,7 +4,7 @@
 
 
 // Binary search
-enum result bs(struct Vector *v, const int value, size_t *out) {
+enum binary_search_result bs(struct Vector *v, const int value, size_t *out) {
     if (v == NULL) {
         fprintf(stderr, "vector_bs: v == NULL\n");
         return ERROR;

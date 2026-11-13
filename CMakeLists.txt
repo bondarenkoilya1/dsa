@@ -6,7 +6,6 @@ set(CMAKE_C_STANDARD 11)
 include_directories(.)
 
 add_executable(Algos
-        enums.h
         vector.c
         vector.h
         search.c
