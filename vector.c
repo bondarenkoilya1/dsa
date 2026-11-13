@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "vector.h"
 #include "search.h"
+#include "sort.h"
 
 #include <assert.h>
 
@@ -35,6 +36,11 @@ int main(void) {
     vector_show(v, 1);
 
     vector_reverse(v);
+    printf("After reverse: ");
+    vector_show(v, 1);
+
+    vector_sort(v);
+    printf("After sort: ");
     vector_show(v, 1);
 
     // Search on an empty vector
@@ -242,6 +248,15 @@ int vector_reverse(struct Vector *v) {
     }
 
     return EXIT_SUCCESS;
+}
+
+int vector_sort(struct Vector *v) {
+    if (v == NULL) {
+        fprintf(stderr, "vector_sort: v == NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    return selection_sort(v);
 }
 
 /* ---------- end: state and utilities ---------- */

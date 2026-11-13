@@ -9,4 +9,6 @@ add_executable(Algos
         vector.c
         vector.h
         search.c
-        search.h)
+        search.h
+        sort.c
+        sort.h)

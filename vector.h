@@ -20,6 +20,7 @@ int vector_shrink(struct Vector *v, size_t spare);
 int vector_reserve(struct Vector *v, size_t new_cap);
 enum binary_search_result vector_find(struct Vector *v, int value, size_t *out, bool is_sorted);
 int vector_reverse(struct Vector *v);
+int vector_sort(struct Vector *v);
 
 bool vector_is_empty(const struct Vector *v);
 int vector_clear(struct Vector *v);
