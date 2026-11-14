@@ -8,7 +8,7 @@ int selection_sort(struct Vector *v) {
     if (v == NULL) {
         fprintf(stderr, "selection_sort: v == NULL\n");
         return EXIT_FAILURE;
-    };
+    }
 
     struct Vector *copy = vector_init(v->capacity);
     copy->length = v->length;

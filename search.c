@@ -3,19 +3,10 @@
 #include <stdio.h>
 
 
-// Binary search
-enum binary_search_result bs(struct Vector *v, const int value, size_t *out) {
-    if (v == NULL) {
-        fprintf(stderr, "vector_bs: v == NULL\n");
-        return ERROR;
-    }
-
-    if (out == NULL) {
-        fprintf(stderr, "vector_bs: out == NULL\n");
-        return ERROR;
-    }
-
-    if (v->length == 0) return NOT_FOUND;
+// binary search
+enum vector_status bs(struct Vector *v, const int value, size_t *out) {
+    if (v == NULL || out == NULL) return VECTOR_ERR_NULL;
+    if (v->length == 0) return VECTOR_NOT_FOUND;
 
     size_t low = 0;
     size_t high = v->length - 1;
@@ -26,7 +17,7 @@ enum binary_search_result bs(struct Vector *v, const int value, size_t *out) {
 
         if (guess == value) {
             *out = mid;
-            return FOUND;
+            return VECTOR_OK;
         }
 
         if (guess < value) {
@@ -37,5 +28,5 @@ enum binary_search_result bs(struct Vector *v, const int value, size_t *out) {
         }
     }
 
-    return NOT_FOUND;
+    return VECTOR_NOT_FOUND;
 }
