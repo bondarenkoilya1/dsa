@@ -55,7 +55,7 @@ enum vector_status vector_reserve(Vector *v, size_t new_cap);
 /* vector_find searches for value and writes its index to *out (only when FOUND).
     is_sorted == true:  binary search, v must be sorted ascending, returns ANY matching index.
     is_sorted == false: linear search, returns the FIRST matching index. */
-enum vector_status vector_find(Vector *v, int value, size_t *out, bool is_sorted);
+enum vector_status vector_find(const Vector *v, int value, size_t *out, bool is_sorted);
 
 enum vector_status vector_reverse(Vector *v);
 

@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <string.h>
 #include "vector.h"
 #include "search.h"
 #include "sort.h"
 
-#include <assert.h>
 
 /* ---------- LIFECYCLE ---------- */
 
@@ -79,9 +79,10 @@ enum vector_status vector_insert(Vector *v, const size_t index, const int value)
         if (st != VECTOR_OK) return st;
     }
 
-    for (size_t i = v->length; i > index; i--) {
-        v->items[i] = v->items[i - 1];
-    }
+    memmove(&v->items[index+1],
+            &v->items[index],
+            (v->length - index) * sizeof *v->items);
+
     v->items[index] = value;
     v->length++;
 
@@ -93,9 +94,10 @@ enum vector_status vector_remove(Vector *v, const size_t index) {
     if (index >= v->length) return VECTOR_ERR_INDEX;
 
 
-    for (size_t i = index; i + 1 < v->length; i++) {
-        v->items[i] = v->items[i + 1];
-    }
+    memmove(&v->items[index],
+            &v->items[index+1],
+            (v->length - index - 1) * sizeof *v->items);
+
     v->length--;
     return VECTOR_OK;
 }
@@ -118,13 +120,12 @@ enum vector_status vector_reserve(Vector *v, const size_t new_cap) {
     return vector_realloc(v, new_cap);
 }
 
-enum vector_status vector_find(Vector *v, const int value, size_t *out, const bool is_sorted) {
+enum vector_status vector_find(const Vector *v, const int value, size_t *out, const bool is_sorted) {
     if (v == NULL || out == NULL) return VECTOR_ERR_NULL;
 
     if (is_sorted) return binary_search(v, value, out);
 
-    const enum vector_status res = linear_search(v, value, out);
-    return res == VECTOR_OK ? VECTOR_OK : VECTOR_NOT_FOUND;
+    return linear_search(v, value, out);
 }
 
 enum vector_status vector_reverse(Vector *v) {
