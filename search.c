@@ -3,8 +3,7 @@
 #include <stdio.h>
 
 
-// binary search
-enum vector_status bs(struct Vector *v, const int value, size_t *out) {
+enum vector_status binary_search(const Vector *v, const int value, size_t *out) {
     if (v == NULL || out == NULL) return VECTOR_ERR_NULL;
     if (v->length == 0) return VECTOR_NOT_FOUND;
 
@@ -25,6 +24,20 @@ enum vector_status bs(struct Vector *v, const int value, size_t *out) {
         } else {
             if (mid == 0) break;
             high = mid - 1;
+        }
+    }
+
+    return VECTOR_NOT_FOUND;
+}
+
+enum vector_status linear_search(const Vector *v, const int value, size_t *out) {
+    if (v == NULL || out == NULL) return VECTOR_ERR_NULL;
+    if (v->length == 0) return VECTOR_NOT_FOUND;
+
+    for (size_t i = 0; i < v->length; i++) {
+        if (v->items[i] == value) {
+            *out = i;
+            return VECTOR_OK;
         }
     }
 

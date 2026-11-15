@@ -121,16 +121,10 @@ enum vector_status vector_reserve(Vector *v, const size_t new_cap) {
 enum vector_status vector_find(Vector *v, const int value, size_t *out, const bool is_sorted) {
     if (v == NULL || out == NULL) return VECTOR_ERR_NULL;
 
-    if (is_sorted) return bs(v, value, out);
+    if (is_sorted) return binary_search(v, value, out);
 
-    for (size_t i = 0; i < v->length; i++) {
-        if (v->items[i] == value) {
-            *out = i;
-            return VECTOR_OK;
-        }
-    }
-
-    return VECTOR_NOT_FOUND;
+    const enum vector_status res = linear_search(v, value, out);
+    return res == VECTOR_OK ? VECTOR_OK : VECTOR_NOT_FOUND;
 }
 
 enum vector_status vector_reverse(Vector *v) {
@@ -207,4 +201,3 @@ enum vector_status vector_realloc(Vector *v, const size_t new_cap) {
 
     return VECTOR_OK;
 }
-
