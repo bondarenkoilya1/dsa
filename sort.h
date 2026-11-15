@@ -1,6 +1,6 @@
 #pragma once
 #include "vector.h"
 
-int selection_sort(struct Vector *v);
+static size_t find_smallest(const Vector *v, size_t start);
 
-int find_smallest(const struct Vector *v, size_t *out);
+enum vector_status selection_sort(const Vector *v);

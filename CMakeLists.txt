@@ -6,6 +6,7 @@ set(CMAKE_C_STANDARD 11)
 include_directories(.)
 
 add_executable(Algos
+        main.c
         vector.c
         vector.h
         search.c

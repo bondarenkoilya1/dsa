@@ -19,8 +19,10 @@ enum vector_status {
     VECTOR_NOT_FOUND
 };
 
+// vector_init creates an empty vector with the specified initial capacity.
 Vector *vector_init(size_t capacity);
 
+// vector_free frees the memory taken by vector items and the vector itself
 enum vector_status vector_free(Vector *v);
 
 // adds elements to the end of the vector (at v[length])
@@ -63,7 +65,7 @@ bool vector_is_empty(const Vector *v);
 
 enum vector_status vector_clear(Vector *v);
 
-void vector_show(const Vector *v, bool show_empty);
+enum vector_status vector_show(const Vector *v, bool show_empty);
 
 enum vector_status vector_expand(Vector *v);
 
