@@ -20,22 +20,25 @@ enum list_status list_unshift(List *l, int value) {
   buff->value = value;
   l->head = buff;
 
-  if (l->length == 0)
+  if (l->length == 0) {
     l->tail = buff;
+  }
 
   l->length++;
   return LIST_OK;
 }
 
-// enum list_status list_show(List *l) {
-//   if (l == NULL || l->head == NULL)
-//     return LIST_ERR_NULL;
+enum list_status list_show(List *l) {
+  if (l == NULL || l->head == NULL)
+    return LIST_ERR_NULL;
 
-//   Node *current = l->head;
+  putchar('[');
+  for (Node *current = l->head; current != NULL; current = current->next) {
+    if (current != l->head)
+      printf(", ");
+    printf("%d", current->value);
+  }
+  puts("]");
 
-//   while (current->value != 5) {
-//     puts("IS not 5");
-//   }
-
-//   return LIST_OK;
-// }
+  return LIST_OK;
+}

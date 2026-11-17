@@ -18,4 +18,4 @@ enum list_status list_init(List *l);
 // adds elements at the begining
 enum list_status list_unshift(List *l, int value);
 
-// enum list_status list_show(List *l);
+enum list_status list_show(List *l);

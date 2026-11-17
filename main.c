@@ -8,7 +8,9 @@
 int main(void) {
   List l;
   list_init(&l);
-  // list_show(&l);
+  list_unshift(&l, 3);
+  list_unshift(&l, 55);
+  list_show(&l);
 }
 
 // int main(void) {
