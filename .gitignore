@@ -1,5 +1,4 @@
 .idea
 cmake-build-debug
-
 todo.txt
-fixes.png
+build.dSYM
