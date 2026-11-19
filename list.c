@@ -56,6 +56,42 @@ enum list_status list_push(List *l, int value) {
   return LIST_OK;
 }
 
+enum list_status list_pop(List *l) {
+  if (l == NULL || l->head == NULL)
+    return LIST_ERR_NULL;
+
+  for (Node *current = l->head;; current = current->next) {
+    if (current->next == l->tail) {
+      free(l->tail);
+      current->next = NULL;
+      l->tail = current;
+      l->length--;
+      return LIST_OK;
+    }
+  }
+
+  return LIST_ERR;
+}
+
+enum list_status list_shift(List *l) {
+  if (l == NULL)
+    return LIST_ERR_NULL;
+
+  if (l->head == NULL || l->length == 0)
+    return LIST_ERR_EMPTY;
+
+  Node *tmp = l->head;
+  l->head = tmp->next;
+
+  if (l->head == NULL)
+    l->tail = NULL;
+
+  free(tmp);
+  l->length--;
+
+  return LIST_OK;
+}
+
 // UTILS
 
 enum list_status list_show(List *l) {
