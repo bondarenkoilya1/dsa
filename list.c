@@ -140,6 +140,40 @@ static enum list_status list_pop(List *l) {
 
 /* ---------- ARBITRARY POSITION ---------- */
 
+enum list_status list_insert(List *l, size_t index, int value) {
+  if (l == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  if (index > l->length) {
+    return LIST_ERR_INDEX;
+  }
+
+  if (index == 0) {
+    return list_unshift(l, value);
+  }
+
+  if (index == l->length) {
+    return list_push(l, value);
+  }
+
+  Node *prev = l->head;
+  for (size_t i = 0; i < index - 1; i++) {
+    prev = prev->next;
+  }
+
+  Node *buff = malloc(sizeof(Node));
+  if (buff == NULL) {
+    return LIST_ERR_ALLOC;
+  }
+  buff->value = value;
+  buff->next = prev->next;
+
+  prev->next = buff;
+  l->length++;
+  return LIST_OK;
+}
+
 enum list_status list_remove(List *l, size_t index) {
   if (l == NULL) {
     return LIST_ERR_NULL;

@@ -27,16 +27,6 @@ enum list_status {
 
 enum list_status list_init(List *l);
 enum list_status list_free(List *l);
-enum list_status list_free(List *l);
+enum list_status list_insert(List *l, size_t index, int value);
 enum list_status list_remove(List *l, size_t index);
 enum list_status list_show(const List *l);
-
-/* ---------- INTERNAL HELPERS ---------- */
-
-// start of the list
-static enum list_status list_unshift(List *l, int value); // add
-static enum list_status list_shift(List *l);              // remove
-
-// end of the list
-static enum list_status list_push(List *l, int value); // add
-static enum list_status list_pop(List *l);             // remove

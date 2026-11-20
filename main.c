@@ -8,10 +8,10 @@
 int main(void) {
   List l;
   list_init(&l);
-  list_unshift(&l, 3);
-  list_unshift(&l, 7);
-  list_unshift(&l, 9);
-  list_unshift(&l, 1);
+  int i = 0;
+  list_insert(&l, i++, 3);
+  list_insert(&l, i++, 1);
+  list_insert(&l, i++, 9);
   list_show(&l);
   list_remove(&l, 2);
 
