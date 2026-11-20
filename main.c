@@ -9,11 +9,11 @@ int main(void) {
   List l;
   list_init(&l);
   list_unshift(&l, 3);
-  list_unshift(&l, 55);
-  list_push(&l, 99);
+  list_unshift(&l, 7);
+  list_unshift(&l, 9);
+  list_unshift(&l, 1);
   list_show(&l);
-  list_pop(&l);
-  list_show(&l);
+  list_remove(&l, 2);
 }
 
 /* int main(void) {
