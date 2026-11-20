@@ -16,6 +16,25 @@ enum list_status list_init(List *l) {
   return LIST_OK;
 }
 
+enum list_status list_free(List *l) {
+  if (l == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  Node *current = l->head;
+  while (current != NULL) {
+    Node *next = current->next;
+    free(current);
+    current = next;
+  }
+
+  l->head = NULL;
+  l->tail = NULL;
+  l->length = 0;
+
+  return LIST_OK;
+}
+
 /* ---------- START OF LIST ---------- */
 
 static enum list_status list_unshift(List *l, int value) {

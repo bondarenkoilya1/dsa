@@ -14,6 +14,8 @@ int main(void) {
   list_unshift(&l, 1);
   list_show(&l);
   list_remove(&l, 2);
+
+  list_free(&l);
 }
 
 /* int main(void) {

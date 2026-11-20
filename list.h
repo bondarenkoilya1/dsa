@@ -26,6 +26,8 @@ enum list_status {
 /* ---------- PUBLIC API ---------- */
 
 enum list_status list_init(List *l);
+enum list_status list_free(List *l);
+enum list_status list_free(List *l);
 enum list_status list_remove(List *l, size_t index);
 enum list_status list_show(const List *l);
 
