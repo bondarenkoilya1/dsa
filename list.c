@@ -4,8 +4,6 @@
 
 #include "list.h"
 
-/* ---------- INIT ---------- */
-
 enum list_status list_init(List *l) {
   if (l == NULL) {
     return LIST_ERR_NULL;
@@ -108,107 +106,6 @@ enum list_status list_find(const List *l, int value, Node **out,
   return LIST_NOT_FOUND;
 }
 
-enum list_status list_unshift(List *l, int value) {
-  if (l == NULL) {
-    return LIST_ERR_NULL;
-  }
-
-  Node *buff = malloc(sizeof(Node));
-  if (buff == NULL) {
-    return LIST_ERR_ALLOC;
-  }
-  buff->value = value;
-  buff->next = l->head;
-  l->head = buff;
-
-  if (l->length == 0) {
-    l->tail = buff;
-  }
-
-  l->length++;
-  return LIST_OK;
-}
-
-enum list_status list_shift(List *l) {
-  if (l == NULL) {
-    return LIST_ERR_NULL;
-  }
-
-  if (l->head == NULL || l->length == 0) {
-    return LIST_ERR_EMPTY;
-  }
-
-  Node *tmp = l->head;
-  l->head = tmp->next;
-
-  if (l->head == NULL) {
-    l->tail = NULL;
-  }
-
-  free(tmp);
-  l->length--;
-
-  return LIST_OK;
-}
-
-enum list_status list_push(List *l, int value) {
-  if (l == NULL) {
-    return LIST_ERR_NULL;
-  }
-
-  Node *buff = malloc(sizeof(Node));
-  if (buff == NULL) {
-    return LIST_ERR_ALLOC;
-  }
-  buff->value = value;
-  buff->next = NULL;
-
-  if (l->length == 0) {
-    l->head = buff;
-  } else {
-    l->tail->next = buff;
-  }
-
-  l->tail = buff;
-  l->length++;
-
-  return LIST_OK;
-}
-
-enum list_status list_pop(List *l) {
-  if (l == NULL) {
-    return LIST_ERR_NULL;
-  }
-
-  if (l->head == NULL) {
-    return LIST_ERR_EMPTY;
-  }
-
-  // single element
-  if (l->head == l->tail) {
-    free(l->head);
-    l->head = NULL;
-    l->tail = NULL;
-    l->length = 0;
-    return LIST_OK;
-  }
-
-  // find the node right before the tail
-  for (Node *current = l->head;; current = current->next) {
-    if (current->next == l->tail) {
-      free(l->tail);
-      current->next = NULL;
-      l->tail = current;
-      l->length--;
-      return LIST_OK;
-    }
-  }
-
-  return LIST_ERR;
-}
-
-/* ---------- ARBITRARY POSITION ---------- */
-
 enum list_status list_insert(List *l, size_t index, int value) {
   if (l == NULL) {
     return LIST_ERR_NULL;
@@ -243,6 +140,51 @@ enum list_status list_insert(List *l, size_t index, int value) {
   return LIST_OK;
 }
 
+enum list_status list_unshift(List *l, int value) {
+  if (l == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  Node *buff = malloc(sizeof(Node));
+  if (buff == NULL) {
+    return LIST_ERR_ALLOC;
+  }
+  buff->value = value;
+  buff->next = l->head;
+  l->head = buff;
+
+  if (l->length == 0) {
+    l->tail = buff;
+  }
+
+  l->length++;
+  return LIST_OK;
+}
+
+enum list_status list_push(List *l, int value) {
+  if (l == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  Node *buff = malloc(sizeof(Node));
+  if (buff == NULL) {
+    return LIST_ERR_ALLOC;
+  }
+  buff->value = value;
+  buff->next = NULL;
+
+  if (l->length == 0) {
+    l->head = buff;
+  } else {
+    l->tail->next = buff;
+  }
+
+  l->tail = buff;
+  l->length++;
+
+  return LIST_OK;
+}
+
 enum list_status list_remove(List *l, size_t index) {
   if (l == NULL) {
     return LIST_ERR_NULL;
@@ -260,7 +202,6 @@ enum list_status list_remove(List *l, size_t index) {
     return list_pop(l);
   }
 
-  // walk to the node before the target
   Node *prev = l->head;
   for (size_t i = 0; i < index - 1; i++) {
     prev = prev->next;
@@ -274,34 +215,74 @@ enum list_status list_remove(List *l, size_t index) {
   return LIST_OK;
 }
 
-/* ---------- UTILS ---------- */
-
-enum list_status list_show(const List *l) {
+enum list_status list_shift(List *l) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
 
-  putchar('[');
-  for (const Node *current = l->head; current != NULL;
-       current = current->next) {
-    if (current != l->head) {
-      printf(", ");
-    }
-    printf("%d", current->value);
+  if (l->head == NULL || l->length == 0) {
+    return LIST_ERR_EMPTY;
   }
-  puts("]");
+
+  Node *tmp = l->head;
+  l->head = tmp->next;
+
+  if (l->head == NULL) {
+    l->tail = NULL;
+  }
+
+  free(tmp);
+  l->length--;
 
   return LIST_OK;
 }
 
-bool list_includes(const List *l, int value) {
+enum list_status list_pop(List *l) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
 
-  Node *tmp;
-  enum list_status res = list_find(l, value, &tmp, NULL);
-  return res == LIST_OK;
+  if (l->head == NULL) {
+    return LIST_ERR_EMPTY;
+  }
+
+  if (l->head == l->tail) {
+    free(l->head);
+    l->head = NULL;
+    l->tail = NULL;
+    l->length = 0;
+    return LIST_OK;
+  }
+
+  for (Node *current = l->head;; current = current->next) {
+    if (current->next == l->tail) {
+      free(l->tail);
+      current->next = NULL;
+      l->tail = current;
+      l->length--;
+      return LIST_OK;
+    }
+  }
+
+  return LIST_ERR;
+}
+
+enum list_status list_clear(List *l) {
+  if (l == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  if (l->head == NULL) {
+    return LIST_ERR_EMPTY;
+  }
+
+  Node *current = l->head;
+  while (current != NULL) {
+    current->value = 0;
+    current = current->next;
+  }
+
+  return LIST_OK;
 }
 
 enum list_status list_copy(List *l, List *out) {
@@ -330,22 +311,32 @@ enum list_status list_copy(List *l, List *out) {
   return LIST_OK;
 }
 
-enum list_status list_clear(List *l) {
+enum list_status list_show(const List *l) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
 
-  if (l->head == NULL) {
-    return LIST_ERR_EMPTY;
+  putchar('[');
+  for (const Node *current = l->head; current != NULL;
+       current = current->next) {
+    if (current != l->head) {
+      printf(", ");
+    }
+    printf("%d", current->value);
   }
-
-  Node *current = l->head;
-  while (current != NULL) {
-    current->value = 0;
-    current = current->next;
-  }
+  puts("]");
 
   return LIST_OK;
+}
+
+bool list_includes(const List *l, int value) {
+  if (l == NULL) {
+    return false;
+  }
+
+  Node *tmp;
+  enum list_status res = list_find(l, value, &tmp, NULL);
+  return res == LIST_OK;
 }
 
 bool list_is_empty(const List *l) {
