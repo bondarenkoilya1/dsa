@@ -25,6 +25,9 @@ int main(void) {
   puts("Copy:");
   list_show(&ll);
 
+  list_clear(&l);
+  list_show(&l);
+
   list_free(&l);
   list_free(&ll);
 }

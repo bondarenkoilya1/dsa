@@ -32,4 +32,7 @@ enum list_status list_insert(List *l, size_t index, int value);
 enum list_status list_remove(List *l, size_t index);
 enum list_status list_show(const List *l);
 enum list_status list_copy(List *l, List *out);
+enum list_status list_clear(List *l);
 bool list_is_empty(const List *l);
+
+// add getters, setters, clear (to 0s), reverse< sort, find

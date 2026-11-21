@@ -251,6 +251,20 @@ enum list_status list_copy(List *l, List *out) {
   return LIST_OK;
 }
 
+enum list_status list_clear(List *l) {
+  if (l == NULL || l->head == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  Node *current = l->head;
+  while (current != NULL) {
+    current->value = 0;
+    current = current->next;
+  }
+
+  return LIST_OK;
+}
+
 bool list_is_empty(const List *l) {
   if (l == NULL) {
     return true;
