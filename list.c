@@ -36,7 +36,7 @@ enum list_status list_free(List *l) {
   return LIST_OK;
 }
 
-enum list_status list_get(List *l, size_t index, Node **out) {
+enum list_status list_get(const List *l, size_t index, Node **out) {
   if (l == NULL || out == NULL) {
     return LIST_ERR_NULL;
   }
@@ -55,6 +55,24 @@ enum list_status list_get(List *l, size_t index, Node **out) {
   }
 
   *out = current;
+  return LIST_OK;
+}
+
+enum list_status list_set(List *l, size_t index, int value) {
+  if (l == NULL || l->head == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  if (index >= l->length) {
+    return LIST_ERR_INDEX;
+  }
+
+  Node *current = l->head;
+  for (size_t i = 0; i < index; i++) {
+    current = current->next;
+  }
+
+  current->value = value;
   return LIST_OK;
 }
 
