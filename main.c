@@ -14,8 +14,19 @@ int main(void) {
   list_insert(&l, i++, 9);
   list_show(&l);
   list_remove(&l, 2);
+  list_show(&l);
+
+  List ll;
+  enum list_status res = list_copy(&l, &ll);
+  if (res != LIST_OK) {
+    return res;
+  }
+
+  puts("Copy:");
+  list_show(&ll);
 
   list_free(&l);
+  list_free(&ll);
 }
 
 /* int main(void) {

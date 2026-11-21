@@ -1,4 +1,5 @@
 #pragma once
+#include <stdbool.h>
 #include <stddef.h>
 
 /* ---------- TYPES ---------- */
@@ -30,3 +31,5 @@ enum list_status list_free(List *l);
 enum list_status list_insert(List *l, size_t index, int value);
 enum list_status list_remove(List *l, size_t index);
 enum list_status list_show(const List *l);
+enum list_status list_copy(List *l, List *out);
+bool list_is_empty(const List *l);

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -223,4 +224,40 @@ enum list_status list_show(const List *l) {
   puts("]");
 
   return LIST_OK;
+}
+
+enum list_status list_copy(List *l, List *out) {
+  if (l == NULL || out == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  if (l == out) {
+    return LIST_ERR;
+  }
+
+  size_t counter = 0;
+
+  list_init(out);
+  Node *current = l->head;
+  while (current != NULL) {
+    enum list_status res = list_insert(out, counter++, current->value);
+    if (res != LIST_OK) {
+      list_free(out);
+      return res;
+    }
+    current = current->next;
+  }
+
+  return LIST_OK;
+}
+
+bool list_is_empty(const List *l) {
+  if (l == NULL) {
+    return true;
+  }
+
+  assert((l->length == 0) == (l->head == NULL));
+  assert((l->length == 0) == (l->tail == NULL));
+
+  return l->length == 0;
 }
