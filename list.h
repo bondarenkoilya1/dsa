@@ -46,7 +46,13 @@ enum list_status list_remove(List *l, size_t index);
 enum list_status list_shift(List *l); // removes from the start
 enum list_status list_pop(List *l);   // removes from the end
 
-enum list_status list_show(const List *l);
-enum list_status list_copy(List *l, List *out);
 enum list_status list_clear(List *l);
+enum list_status list_copy(List *l, List *out);
+
+// guide
+enum list_status list_show(const List *l);
+bool list_includes(const List *l, int value);
 bool list_is_empty(const List *l);
+
+// todo: .reverse, .sort(merge),
+// maybe .equal()

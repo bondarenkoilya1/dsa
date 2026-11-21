@@ -294,6 +294,16 @@ enum list_status list_show(const List *l) {
   return LIST_OK;
 }
 
+bool list_includes(const List *l, int value) {
+  if (l == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  Node *tmp;
+  enum list_status res = list_find(l, value, &tmp, NULL);
+  return res == LIST_OK;
+}
+
 enum list_status list_copy(List *l, List *out) {
   if (l == NULL || out == NULL) {
     return LIST_ERR_NULL;
