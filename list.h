@@ -32,14 +32,21 @@ enum list_status list_free(List *l);
 
 enum list_status list_get(const List *l, size_t index, Node **out);
 enum list_status list_set(List *l, size_t index, int value);
+// it's acceptable outIndex to be null;
+enum list_status list_find(const List *l, int value, Node **out,
+                           size_t *outIndex);
 
+// uses unshift, push
 enum list_status list_insert(List *l, size_t index, int value);
+enum list_status list_unshift(List *l, int value); // adds to the start
+enum list_status list_push(List *l, int value);    // adds to the end
 
+// uses shift, pop
 enum list_status list_remove(List *l, size_t index);
+enum list_status list_shift(List *l); // removes from the start
+enum list_status list_pop(List *l);   // removes from the end
 
 enum list_status list_show(const List *l);
 enum list_status list_copy(List *l, List *out);
 enum list_status list_clear(List *l);
 bool list_is_empty(const List *l);
-
-// add setters, reverse< sort, find

@@ -41,12 +41,12 @@ enum list_status list_get(const List *l, size_t index, Node **out) {
     return LIST_ERR_NULL;
   }
 
-  if (l->head == NULL) {
-    return LIST_NOT_FOUND;
-  }
-
   if (index >= l->length) {
     return LIST_ERR_INDEX;
+  }
+
+  if (l->head == NULL) {
+    return LIST_NOT_FOUND;
   }
 
   Node *current = l->head;
@@ -59,8 +59,12 @@ enum list_status list_get(const List *l, size_t index, Node **out) {
 }
 
 enum list_status list_set(List *l, size_t index, int value) {
-  if (l == NULL || l->head == NULL) {
+  if (l == NULL) {
     return LIST_ERR_NULL;
+  }
+
+  if (l->head == NULL) {
+    return LIST_ERR_EMPTY;
   }
 
   if (index >= l->length) {
@@ -76,9 +80,35 @@ enum list_status list_set(List *l, size_t index, int value) {
   return LIST_OK;
 }
 
-/* ---------- START OF LIST ---------- */
+enum list_status list_find(const List *l, int value, Node **out,
+                           size_t *outIndex) {
+  if (l == NULL || out == NULL) {
+    return LIST_ERR_NULL;
+  }
 
-static enum list_status list_unshift(List *l, int value) {
+  if (l->head == NULL) {
+    return LIST_NOT_FOUND;
+  }
+
+  size_t counter = 0;
+  Node *current = l->head;
+  while (current != NULL) {
+    if (current->value == value) {
+      *out = current;
+      if (outIndex != NULL) {
+        *outIndex = counter;
+      }
+      return LIST_OK;
+    }
+
+    current = current->next;
+    counter++;
+  }
+
+  return LIST_NOT_FOUND;
+}
+
+enum list_status list_unshift(List *l, int value) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
@@ -99,7 +129,7 @@ static enum list_status list_unshift(List *l, int value) {
   return LIST_OK;
 }
 
-static enum list_status list_shift(List *l) {
+enum list_status list_shift(List *l) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
@@ -121,9 +151,7 @@ static enum list_status list_shift(List *l) {
   return LIST_OK;
 }
 
-/* ---------- END OF LIST ---------- */
-
-static enum list_status list_push(List *l, int value) {
+enum list_status list_push(List *l, int value) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
@@ -147,7 +175,7 @@ static enum list_status list_push(List *l, int value) {
   return LIST_OK;
 }
 
-static enum list_status list_pop(List *l) {
+enum list_status list_pop(List *l) {
   if (l == NULL) {
     return LIST_ERR_NULL;
   }
@@ -277,6 +305,7 @@ enum list_status list_copy(List *l, List *out) {
 
   size_t counter = 0;
 
+  list_free(out);
   list_init(out);
   Node *current = l->head;
   while (current != NULL) {
@@ -292,8 +321,12 @@ enum list_status list_copy(List *l, List *out) {
 }
 
 enum list_status list_clear(List *l) {
-  if (l == NULL || l->head == NULL) {
+  if (l == NULL) {
     return LIST_ERR_NULL;
+  }
+
+  if (l->head == NULL) {
+    return LIST_ERR_EMPTY;
   }
 
   Node *current = l->head;
