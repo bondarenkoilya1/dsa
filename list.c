@@ -36,6 +36,28 @@ enum list_status list_free(List *l) {
   return LIST_OK;
 }
 
+enum list_status list_get(List *l, size_t index, Node **out) {
+  if (l == NULL || out == NULL) {
+    return LIST_ERR_NULL;
+  }
+
+  if (l->head == NULL) {
+    return LIST_NOT_FOUND;
+  }
+
+  if (index >= l->length) {
+    return LIST_ERR_INDEX;
+  }
+
+  Node *current = l->head;
+  for (size_t i = 0; i < index; i++) {
+    current = current->next;
+  }
+
+  *out = current;
+  return LIST_OK;
+}
+
 /* ---------- START OF LIST ---------- */
 
 static enum list_status list_unshift(List *l, int value) {
