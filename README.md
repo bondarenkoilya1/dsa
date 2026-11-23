@@ -1,5 +1,3 @@
-# Created Data Structures
-
 ## C
 
 - Vector (dynamic array)
