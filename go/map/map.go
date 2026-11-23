@@ -12,7 +12,7 @@ type Map struct {
 	values [][]Entry
 }
 
-func Hash(s string) uint32 {
+func hash(s string) uint32 {
 	var hash uint32 = 2166136261
 
 	for i := 0; i < len(s); i++ {
@@ -30,10 +30,33 @@ func NewMap(size int) *Map {
 	}
 }
 
+func (m *Map) Insert(key string, value int) {
+	h := hash(key)
+	index := h%uint32(len(m.values))
+
+	m.values[index] = append(m.values[index], Entry{
+		key: key,
+		value: value,
+	})
+	m.length++
+}
+
 func (m* Map) Entries() {
-	for _, bucket := range m.values {
-		for _, entry := range bucket {
-			fmt.Printf("{ %s: %d }\n", entry.key, entry.value)
+	for i, bucket := range m.values {
+		fmt.Printf("Bucket[%d]: ", i)
+
+		if (len(bucket) == 0) {
+			fmt.Println("empty")
+			continue
 		}
+
+		for j, entry := range bucket {
+			if j > 0 {
+				fmt.Print(", ")
+			}
+			fmt.Printf("{ %s: %d }", entry.key, entry.value)
+		}
+
+		fmt.Println()
 	}
 }
