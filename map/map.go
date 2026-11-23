@@ -16,6 +16,6 @@ func Hash(s string) uint32 {
 	return hash
 }
 
-//func (m *Map) Init() {
-//
-//}
+func NewMap() *Map {
+	return &Map{}
+}
