@@ -41,6 +41,9 @@ func (m *Map) Insert(key string, value int) {
 	m.length++
 }
 
+
+// Print functions
+
 func (m* Map) Entries() {
 	for i, bucket := range m.values {
 		fmt.Printf("Bucket[%d]: ", i)
@@ -58,5 +61,27 @@ func (m* Map) Entries() {
 		}
 
 		fmt.Println()
+	}
+}
+
+func (m *Map) Keys() {
+	for i, bucket := range m.values {
+		fmt.Printf("Bucket[%d]: ", i)
+
+		if (len(bucket) == 0) {
+			fmt.Println("empty")
+			continue
+		}
+		fmt.Printf("{ ")
+
+		for j, entry := range bucket {
+			if j > 0 {
+				fmt.Printf(", ")
+			}
+
+			fmt.Printf("%s", entry.key)
+		}
+
+		fmt.Printf(" }\n")
 	}
 }
