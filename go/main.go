@@ -14,7 +14,7 @@ m.Insert("a", 10)
 m.Insert("k", 20)
 
 m.Insert("u", 30)
-	m.Entries()	
+	entries := m.Entries()	
 	keys := m.Keys()
-	fmt.Println(keys)
+	fmt.Println(entries,keys)
 }

@@ -1,6 +1,4 @@
 package hashmap
-
-import "fmt"
 type Entry struct {
 	key string
 	value int 
@@ -43,24 +41,16 @@ func (m *Map) Insert(key string, value int) {
 
 // Print functions
 
-func (m* Map) Entries() {
-	for i, bucket := range m.values {
-		fmt.Printf("Bucket[%d]: ", i)
+func (m* Map) Entries() []Entry{
+	entries := make([]Entry, 0, m.length)
 
-		if (len(bucket) == 0) {
-			fmt.Println("empty")
-			continue
+	for _, bucket := range m.values {
+		for _, entry := range bucket {
+			entries = append(entries, entry)
 		}
-
-		for j, entry := range bucket {
-			if j > 0 {
-				fmt.Print(", ")
-			}
-			fmt.Printf("{ %s: %d }", entry.key, entry.value)
-		}
-
-		fmt.Println()
 	}
+	
+	return entries
 }
 
 func (m *Map) Keys() []string {
