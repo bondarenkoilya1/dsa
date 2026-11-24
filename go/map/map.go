@@ -1,10 +1,9 @@
 package hashmap
 
 import "fmt"
-
 type Entry struct {
 	key string
-	value int
+	value int 
 }
 
 type Map struct {
@@ -64,24 +63,14 @@ func (m* Map) Entries() {
 	}
 }
 
-func (m *Map) Keys() {
-	for i, bucket := range m.values {
-		fmt.Printf("Bucket[%d]: ", i)
+func (m *Map) Keys() []string {
+	keys := make([]string, 0, m.length)
 
-		if (len(bucket) == 0) {
-			fmt.Println("empty")
-			continue
+	for _, bucket := range m.values {
+		for _, entry := range bucket {
+			keys = append(keys, entry.key)
 		}
-		fmt.Printf("{ ")
-
-		for j, entry := range bucket {
-			if j > 0 {
-				fmt.Printf(", ")
-			}
-
-			fmt.Printf("%s", entry.key)
-		}
-
-		fmt.Printf(" }\n")
 	}
+
+	return keys
 }

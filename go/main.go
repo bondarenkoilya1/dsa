@@ -1,6 +1,9 @@
 package main
 
-import hashmap "map/map"
+import (
+	"fmt"
+	hashmap "map/map"
+)
 
 func main() {
 	m := hashmap.NewMap(5)
@@ -12,5 +15,6 @@ m.Insert("k", 20)
 
 m.Insert("u", 30)
 	m.Entries()	
-	m.Keys()
+	keys := m.Keys()
+	fmt.Println(keys)
 }
